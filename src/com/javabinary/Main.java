@@ -14,7 +14,7 @@ public class Main {
     static class Example extends HakimenGameEngine {
         String[] tetrominos = new String[7];
         BufferedImage[] skin = new BufferedImage[5];
-
+        BufferedImage bg;
         final int nFieldWidth = 12;
         final int nFieldHeight = 18;
         char[] pField;
@@ -51,8 +51,14 @@ public class Main {
 
         @Override
         public boolean OnUserCreate() {
+
+            try {
+                bg = ImageIO.read(getClass().getResource("assets/bg.jpg"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             //Assets
-            System.out.println(selectedSkin);
             tetrominos[0] =  "..X.";
             tetrominos[0] += "..X.";
             tetrominos[0] += "..X.";
@@ -110,7 +116,10 @@ public class Main {
         @Override
         public boolean OnUserUpdate(Graphics2D g, int elapsedTime) {
             g.scale(2,2);
-            FillRect(g, 0, 0, ScreenWidth(), ScreenHeight(), Color.BLACK);
+            DrawPartialImage(g,0,0,0,0,600,500 ,bg);
+            FillRect(g,16,32,nFieldWidth*16,nFieldHeight*16,Color.BLACK);
+            FillRect(g,0,0,ScreenWidth(),25,Color.BLACK);
+
             //Kill the Game
             if(bGameOver) {
                 try {
@@ -218,6 +227,7 @@ public class Main {
                                 }
                                 vLines.add(nCurrentY+py);
                             }
+
                         }
                     }
                     nScore+=25;
@@ -302,8 +312,9 @@ public class Main {
             DrawFormattedString(g,10,20,Color.WHITE,"SCORE : %10d",nScore);
 
             DrawString(g,300,15,Color.WHITE,"Stored :");
-            DrawRect(g,300,25,(4*16),(4*16) + 32,Color.WHITE);
             //Draw Stored Piece
+            FillRect(g,300,25,16*4,(16*4)+32,Color.BLACK);
+            DrawRect(g,300,25,(4*16),(4*16) + 32,Color.WHITE);
             for (int px = 0; px < 4; px++) {
                 for (int py = 0; py < 4; py++) {
                     if (nStoredPiece != -1) {

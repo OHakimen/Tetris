@@ -1,9 +1,8 @@
 package com.javabinary;
 
-
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -11,13 +10,12 @@ import java.util.ArrayList;
  * <b>Hackimen's Game Engine</b>
  *
  * @author Hackimen
- * @version 1.4
+ * @version 1.5
  */
 
 
 /* Example Usage :
 import java.awt.*;
-
 public class Main{
     static class Example extends HakimenGameEngine{
         @Override
@@ -38,7 +36,7 @@ public class Main{
 }
  */
 
-public class HakimenGameEngine {
+public abstract class HakimenGameEngine {
 
     enum MouseState {
         NULL(0),
@@ -101,9 +99,7 @@ public class HakimenGameEngine {
      *
      * @since 1.0
      */
-    public boolean OnUserCreate() {
-        return true;
-    }
+    public abstract boolean OnUserCreate();
 
     /**
      * Called every frame after <code>OnUserCreate()</code>
@@ -111,9 +107,7 @@ public class HakimenGameEngine {
      * @since 1.0
      */
 
-    public boolean OnUserUpdate(Graphics2D g,int elapsedTime) {
-        return true;
-    }
+    public abstract boolean OnUserUpdate(Graphics2D g, int elapsedTime);
 
     /**
      * Construct a window with a <code>JPanel</code> on it
@@ -129,7 +123,7 @@ public class HakimenGameEngine {
         this.nScreenWidth = nScreenWidth * sy;
         this.sx = sx;
         this.sy = sy;
-        frame.setTitle(String.format("Hakimen's Engine | %s ",title));
+        frame.setTitle("Hakimen`s Engine | " + title);
         frame.setSize(this.nScreenWidth, this.nScreenHeight);
         frame.setDefaultCloseOperation(3);
         frame.setResizable(false);
@@ -183,7 +177,7 @@ public class HakimenGameEngine {
         g.drawImage(img.getSubimage(topX, topY, bottomX, bottomY), x, y, null);
     }
 
-    void DrawPixel(Graphics2D g, int x, int y, Color color) { ;
+    void DrawPixel(Graphics2D g, int x, int y, Color color) {
         g.setColor(color);
         g.drawLine(x, y, x, y);
     }
@@ -193,32 +187,32 @@ public class HakimenGameEngine {
         g.drawLine(startX, startY, endX, endY);
     }
 
-    void DrawWireframeModel(Graphics2D g, ArrayList<float[]> modelCoords, int x, int y, float r, int s, Color color) {
+    void DrawWireframeModel(Graphics2D g, ArrayList<int[]> modelCoords, int x, int y, float r, int s, Color color) {
 
-        ArrayList<float[]> transformedCoords = new ArrayList<>();
+        ArrayList<int[]> transformedCoords = new ArrayList<>();
         int vertices = modelCoords.size();
         //Rotate
         for (int i = 0; i < vertices; i++) {
-            float key = (float) (modelCoords.get(i)[0] * Math.cos(r) - modelCoords.get(i)[1] * Math.sin(r));
-            float val = (float) (modelCoords.get(i)[0] * Math.sin(r) + modelCoords.get(i)[1] * Math.cos(r));
-            transformedCoords.add(new float[]{key, val});
+            int key = (int) (modelCoords.get(i)[0] * Math.cos(r) - modelCoords.get(i)[1] * Math.sin(r));
+            int val = (int) (modelCoords.get(i)[0] * Math.sin(r) + modelCoords.get(i)[1] * Math.cos(r));
+            transformedCoords.add(new int[]{key, val});
         }
         //Scale
         for (int i = 0; i < vertices; i++) {
-            float key = transformedCoords.get(i)[0] * s;
-            float val = transformedCoords.get(i)[1] * s;
-            transformedCoords.set(i, new float[]{key, val});
+            int key = transformedCoords.get(i)[0] * s;
+            int val = transformedCoords.get(i)[1] * s;
+            transformedCoords.set(i, new int[]{key, val});
         }
         //Offset
         for (int i = 0; i < vertices; i++) {
-            float key = transformedCoords.get(i)[0] + x;
-            float val = transformedCoords.get(i)[1] + y;
-            transformedCoords.set(i, new float[]{key, val});
+            int key = transformedCoords.get(i)[0] + x;
+            int val = transformedCoords.get(i)[1] + y;
+            transformedCoords.set(i, new int[]{key, val});
         }
         for (int i = 0; i < vertices + 1; i++) {
             int j = (i + 1);
-            DrawLine(g, (int)transformedCoords.get(i % vertices)[0], (int)transformedCoords.get(i % vertices)[1],
-                    (int)transformedCoords.get(j % vertices)[0], (int)transformedCoords.get(j % vertices)[1], color);
+            DrawLine(g, transformedCoords.get(i % vertices)[0], transformedCoords.get(i % vertices)[1],
+                    transformedCoords.get(j % vertices)[0], transformedCoords.get(j % vertices)[1], color);
         }
     }
 
@@ -235,21 +229,24 @@ public class HakimenGameEngine {
         this.stroke = stroke;
     }
 
+
     class Renderer extends JPanel implements ActionListener {
         Timer t = new Timer(1, this);
         HakimenGameEngine engine;
         long scrollResetTimer = System.currentTimeMillis();
+
         public Renderer(HakimenGameEngine engine) {
             setFocusable(true);
             this.engine = engine;
             t.start();
-            if(engine.OnUserCreate() == false) System.exit(-2);
+            engine.OnUserCreate();
             frame.setVisible(true);
             addKeyListener(new KeyAdapter() {
                 @Override
                 public void keyPressed(KeyEvent keyEvent) {
                     engine.b_keys[keyEvent.getKeyCode()] = true;
                 }
+
                 public void keyReleased(KeyEvent keyEvent) {
                     engine.b_keys[keyEvent.getKeyCode()] = false;
                 }
@@ -267,12 +264,6 @@ public class HakimenGameEngine {
             });
             addMouseMotionListener(new MouseAdapter() {
                 @Override
-                public void mouseDragged(MouseEvent mouseEvent) {
-                    mouseX = mouseEvent.getX();
-                    mouseY = mouseEvent.getY();
-                }
-
-                @Override
                 public void mouseMoved(MouseEvent mouseEvent) {
                     mouseX = mouseEvent.getX();
                     mouseY = mouseEvent.getY();
@@ -286,20 +277,23 @@ public class HakimenGameEngine {
                 }
             });
         }
+
         long t1 = System.currentTimeMillis();
         long t2;
         int elapsedTime;
+
         @Override
         protected void paintComponent(Graphics graphics) {
             super.paintComponent(graphics);
             g = (Graphics2D) graphics;
             tryConfig(g);
-            if(System.currentTimeMillis()-scrollResetTimer > 100)
+            if (System.currentTimeMillis() - scrollResetTimer > 100)
                 nScrollDir = 0;
-            if(engine.OnUserUpdate(g,elapsedTime) == false) System.exit(-1);
+            engine.OnUserUpdate(g, elapsedTime);
             t2 = System.currentTimeMillis();
-            elapsedTime = (int)(t2-t1);
+            elapsedTime = (int) (t2 - t1);
             t1 = t2;
+
         }
 
         @Override
