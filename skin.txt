@@ -1,0 +1,7 @@
+4
+
+// 0 Skin Default
+// 1 Rounded
+// 2 Rounded With DropShadow
+// 3 Plain
+// 4 Not so Plain but Still Plain
