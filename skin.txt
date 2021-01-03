@@ -1,4 +1,4 @@
-4
+2
 
 // 0 Skin Default
 // 1 Rounded

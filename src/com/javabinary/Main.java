@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Main {
-    static class Example extends HakimenGameEngine {
+    static class Example extends PixelGameEngine {
         String[] tetrominos = new String[7];
         BufferedImage[] skin = new BufferedImage[5];
         BufferedImage bg;
@@ -48,6 +48,10 @@ public class Main {
         boolean bHoldRotate = false;
 
         ArrayList<Integer> vLines = new ArrayList<>();
+
+        public Example(String sTitle, int width, int height, Color bgColor) {
+            super(sTitle, width, height, bgColor);
+        }
 
         @Override
         public boolean OnUserCreate() {
@@ -113,12 +117,13 @@ public class Main {
             return true;
         }
 
+
         @Override
-        public boolean OnUserUpdate(Graphics2D g, int elapsedTime) {
-            g.scale(2,2);
-            DrawPartialImage(g,0,0,0,0,600,500 ,bg);
-            FillRect(g,16,32,nFieldWidth*16,nFieldHeight*16,Color.BLACK);
-            FillRect(g,0,0,ScreenWidth(),25,Color.BLACK);
+        public boolean OnUserUpdate(float fElapsedTime) {
+            Scale(2,2);
+            DrawPartialImage(0,0,0,0,600,500 ,bg);
+            FillRect(16,32,nFieldWidth*16,nFieldHeight*16,Color.BLACK);
+            FillRect(0,0,ScreenWidth(),25,Color.BLACK);
 
             //Kill the Game
             if(bGameOver) {
@@ -232,7 +237,16 @@ public class Main {
                     }
                     nScore+=25;
                     if(!vLines.isEmpty()) nScore += (1<<vLines.size())*100;
-                    bAlreadyStored = false;
+                        bAlreadyStored = false;
+
+                    for (int y = 0; y <nFieldHeight; y++) {
+                        for (int x = 0; x < nFieldWidth; x++) {
+                            System.out.print(pField[x+nFieldWidth*y]);
+                        }
+                        System.out.println("");
+                    }
+
+
                     //Choose next Piece
                     nCurrentX = (nFieldWidth-3)/2;
                     nCurrentY = 0;
@@ -250,21 +264,21 @@ public class Main {
             for (int x = 0; x < nFieldWidth; x++) {
                 for (int y = 0; y < nFieldHeight; y++) {
                     if (pField[x + nFieldWidth * y] == '#') {
-                        DrawPartialImage(g, 16 + x * 16, 32 + y * 16, 7*16, 0, 16, 16, skin[selectedSkin]);
+                        DrawPartialImage( 16 + x * 16, 32 + y * 16, 7*16, 0, 16, 16, skin[selectedSkin]);
                     }else if (pField[x + nFieldWidth * y] == 'A') {
-                        DrawPartialImage(g, 16 + x * 16, 32 + y * 16, 3*16, 0, 16, 16, skin[selectedSkin]);
+                        DrawPartialImage( 16 + x * 16, 32 + y * 16, 3*16, 0, 16, 16, skin[selectedSkin]);
                     }else if (pField[x + nFieldWidth * y] == 'B') {
-                        DrawPartialImage(g, 16 + x * 16, 32 + y * 16, 6*16, 0, 16, 16, skin[selectedSkin]);
+                        DrawPartialImage( 16 + x * 16, 32 + y * 16, 6*16, 0, 16, 16, skin[selectedSkin]);
                     }else if (pField[x + nFieldWidth * y] == 'C') {
-                        DrawPartialImage(g, 16 + x * 16, 32 + y * 16, 0*16, 0, 16, 16, skin[selectedSkin]);
+                        DrawPartialImage( 16 + x * 16, 32 + y * 16, 0*16, 0, 16, 16, skin[selectedSkin]);
                     }else if (pField[x + nFieldWidth * y] == 'D') {
-                        DrawPartialImage(g, 16 + x * 16, 32 + y * 16, 4*16, 0, 16, 16, skin[selectedSkin]);
+                        DrawPartialImage( 16 + x * 16, 32 + y * 16, 4*16, 0, 16, 16, skin[selectedSkin]);
                     }else if (pField[x + nFieldWidth * y] == 'E') {
-                        DrawPartialImage(g, 16 + x * 16, 32 + y * 16, 5*16, 0, 16, 16, skin[selectedSkin]);
+                        DrawPartialImage( 16 + x * 16, 32 + y * 16, 5*16, 0, 16, 16, skin[selectedSkin]);
                     }else if (pField[x + nFieldWidth * y] == 'F') {
-                        DrawPartialImage(g, 16 + x * 16, 32 + y * 16, 1*16, 0, 16, 16, skin[selectedSkin]);
+                        DrawPartialImage( 16 + x * 16, 32 + y * 16, 1*16, 0, 16, 16, skin[selectedSkin]);
                     }else if (pField[x + nFieldWidth * y] == 'G') {
-                        DrawPartialImage(g, 16 + x * 16, 32 + y * 16, 2*16, 0, 16, 16, skin[selectedSkin]);
+                        DrawPartialImage( 16 + x * 16, 32 + y * 16, 2*16, 0, 16, 16, skin[selectedSkin]);
                     }
                 }
             }
@@ -274,25 +288,25 @@ public class Main {
                     if (tetrominos[nCurrentPiece].charAt(Rotate(px, py, nCurrentRotation)) == 'X') {
                         switch (nCurrentPiece) {
                             case 0:
-                                DrawPartialImage(g, 16 + (nCurrentX + px) * 16, 32 + (nCurrentY + py) * 16, 3*16, 0, 16, 16, skin[selectedSkin]);
+                                DrawPartialImage( 16 + (nCurrentX + px) * 16, 32 + (nCurrentY + py) * 16, 3*16, 0, 16, 16, skin[selectedSkin]);
                                 break;
                             case 1:
-                                DrawPartialImage(g, 16 + (nCurrentX + px) * 16, 32 + (nCurrentY + py) * 16, 6*16, 0, 16, 16, skin[selectedSkin]);
+                                DrawPartialImage( 16 + (nCurrentX + px) * 16, 32 + (nCurrentY + py) * 16, 6*16, 0, 16, 16, skin[selectedSkin]);
                                 break;
                             case 2:
-                                DrawPartialImage(g, 16 + (nCurrentX + px) * 16, 32 + (nCurrentY + py) * 16, 0*16, 0, 16, 16, skin[selectedSkin]);
+                                DrawPartialImage( 16 + (nCurrentX + px) * 16, 32 + (nCurrentY + py) * 16, 0*16, 0, 16, 16, skin[selectedSkin]);
                                 break;
                             case 3:
-                                DrawPartialImage(g, 16 + (nCurrentX + px) * 16, 32 + (nCurrentY + py) * 16, 4*16, 0, 16, 16, skin[selectedSkin]);
+                                DrawPartialImage( 16 + (nCurrentX + px) * 16, 32 + (nCurrentY + py) * 16, 4*16, 0, 16, 16, skin[selectedSkin]);
                                 break;
                             case 4:
-                                DrawPartialImage(g, 16 + (nCurrentX + px) * 16, 32 + (nCurrentY + py) * 16, 5*16, 0, 16, 16, skin[selectedSkin]);
+                                DrawPartialImage( 16 + (nCurrentX + px) * 16, 32 + (nCurrentY + py) * 16, 5*16, 0, 16, 16, skin[selectedSkin]);
                                 break;
                             case 5:
-                                DrawPartialImage(g, 16 + (nCurrentX + px) * 16, 32 + (nCurrentY + py) * 16, 1*16, 0, 16, 16, skin[selectedSkin]);
+                                DrawPartialImage( 16 + (nCurrentX + px) * 16, 32 + (nCurrentY + py) * 16, 1*16, 0, 16, 16, skin[selectedSkin]);
                                 break;
                             case 6:
-                                DrawPartialImage(g, 16 + (nCurrentX + px) * 16, 32 + (nCurrentY + py) * 16, 2*16, 0, 16, 16, skin[selectedSkin]);
+                                DrawPartialImage( 16 + (nCurrentX + px) * 16, 32 + (nCurrentY + py) * 16, 2*16, 0, 16, 16, skin[selectedSkin]);
                                 break;
                         }
                     }
@@ -309,37 +323,37 @@ public class Main {
                 }
                 vLines.clear();
             }
-            DrawFormattedString(g,10,20,Color.WHITE,"SCORE : %10d",nScore);
+            DrawFormattedString(10,20,Color.WHITE,"SCORE : %10d",nScore);
 
-            DrawString(g,300,15,Color.WHITE,"Stored :");
+            DrawString(300,15,Color.WHITE,"Stored :");
             //Draw Stored Piece
-            FillRect(g,300,25,16*4,(16*4)+32,Color.BLACK);
-            DrawRect(g,300,25,(4*16),(4*16) + 32,Color.WHITE);
+            FillRect(300,25,16*4,(16*4)+32,Color.BLACK);
+            DrawRect(300,25,(4*16),(4*16) + 32,Color.WHITE);
             for (int px = 0; px < 4; px++) {
                 for (int py = 0; py < 4; py++) {
                     if (nStoredPiece != -1) {
                         if (tetrominos[nStoredPiece].charAt(Rotate(px, py, 0)) == 'X') {
                             switch (nStoredPiece) {
                                 case 0:
-                                    DrawPartialImage(g, 300 + px * 16, 32 + py * 16, 3 * 16, 0, 16, 16, skin[selectedSkin]);
+                                    DrawPartialImage( 300 + px * 16, 32 + py * 16, 3 * 16, 0, 16, 16, skin[selectedSkin]);
                                     break;
                                 case 1:
-                                    DrawPartialImage(g, 300 + px * 16, 32 + py * 16, 6 * 16, 0, 16, 16, skin[selectedSkin]);
+                                    DrawPartialImage( 300 + px * 16, 32 + py * 16, 6 * 16, 0, 16, 16, skin[selectedSkin]);
                                     break;
                                 case 2:
-                                    DrawPartialImage(g, 300 + px * 16, 32 + py * 16, 0 * 16, 0, 16, 16, skin[selectedSkin]);
+                                    DrawPartialImage( 300 + px * 16, 32 + py * 16, 0 * 16, 0, 16, 16, skin[selectedSkin]);
                                     break;
                                 case 3:
-                                    DrawPartialImage(g, 300 + px * 16, 32 + py * 16, 4 * 16, 0, 16, 16, skin[selectedSkin]);
+                                    DrawPartialImage( 300 + px * 16, 32 + py * 16, 4 * 16, 0, 16, 16, skin[selectedSkin]);
                                     break;
                                 case 4:
-                                    DrawPartialImage(g, 300 + px * 16, 32 + py * 16, 5 * 16, 0, 16, 16, skin[selectedSkin]);
+                                    DrawPartialImage( 300 + px * 16, 32 + py * 16, 5 * 16, 0, 16, 16, skin[selectedSkin]);
                                     break;
                                 case 5:
-                                    DrawPartialImage(g, 300 + px * 16, 32 + py * 16, 1 * 16, 0, 16, 16, skin[selectedSkin]);
+                                    DrawPartialImage( 300 + px * 16, 32 + py * 16, 1 * 16, 0, 16, 16, skin[selectedSkin]);
                                     break;
                                 case 6:
-                                    DrawPartialImage(g, 300 + px * 16, 32 + py * 16, 2 * 16, 0, 16, 16, skin[selectedSkin]);
+                                    DrawPartialImage( 300 + px * 16, 32 + py * 16, 2 * 16, 0, 16, 16, skin[selectedSkin]);
                                     break;
                             }
                         }
@@ -381,10 +395,7 @@ public class Main {
         }
     }
     public static void main(String[] args) {
-        Example ex = new Example();
-        if (ex.Construct("Tetris ", 800, 700,1, 1)) {
-            System.out.println("[!] Build Successfully");
-        }
-
+        Example ex = new Example("Tetris",800,700,Color.BLACK);
+        ex.start();
     }
 }
